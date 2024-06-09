@@ -4,7 +4,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 
 def generate_and_save_keys():
-    # Генерация ключей и сохранение на диск
+    """Генерирует пару ключей RSA и сохраняет их в файлы."""
     private_key = rsa.generate_private_key(
         public_exponent=65537,
         key_size=2048,
@@ -28,6 +28,7 @@ def generate_and_save_keys():
         ))
 
 def load_keys():
+    """Загружает пару ключей RSA из файлов."""
     try:
         # Загрузка ключей из файлов
         with open("private_key.pem", "rb") as f:
@@ -44,12 +45,14 @@ def load_keys():
         return None, None
 
 def serialize_public_key(public_key):
+    """Сериализует публичный ключ в формат PEM."""
     return public_key.public_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
 
 def deserialize_public_key(public_key_bytes):
+    """Десериализует публичный ключ из формата PEM."""
     try:
         public_key = serialization.load_pem_public_key(
             public_key_bytes,
@@ -61,6 +64,7 @@ def deserialize_public_key(public_key_bytes):
         return None
 
 def rsa_encrypt(message, public_key):
+    """Шифрует сообщение с помощью публичного ключа."""
     encrypted = public_key.encrypt(
         message.encode(),
         padding.OAEP(
@@ -72,6 +76,7 @@ def rsa_encrypt(message, public_key):
     return encrypted
 
 def rsa_decrypt(encrypted_message, private_key):
+    """Расшифровывает сообщение с помощью приватного ключа."""
     decrypted = private_key.decrypt(
         encrypted_message,
         padding.OAEP(
